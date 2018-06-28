@@ -6,7 +6,7 @@
 ## Usage
 
 - `make`
-- `source zshrc.zsh` or `source git-prompt.zsh` on .zshrc
+- `source /path/to/repo/zshrc.zsh` on .zshrc
  
 
 ## Thanks
