@@ -31,8 +31,7 @@ func run() error {
 		if st == "" {
 			break
 		}
-		switch {
-		case st[0] == '#' && st[1] == '#':
+		if st[0] == '#' && st[1] == '#' {
 			switch {
 			case strings.Contains(st, "Initial commit on"):
 				fallthrough
@@ -64,15 +63,17 @@ func run() error {
 					}
 				}
 			}
-		case st[0] == '?' && st[1] == '?':
+		} else if st[0] == '?' && st[1] == '?' {
 			untracked++
-		case st[1] == 'M':
-			changed++
-		case st[0] == 'U':
-			conflicts++
-		case st[0] != ' ':
-			staged++
-		default:
+		} else {
+			if st[1] == 'M' {
+				changed++
+			}
+			if st[0] == 'U' {
+				conflicts++
+			} else if st[0] != ' ' {
+				staged++
+			}
 		}
 	}
 
