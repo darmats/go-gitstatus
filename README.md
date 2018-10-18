@@ -5,10 +5,8 @@
 
 ## Usage
 
-- `make`
-- `source /path/to/repo/zshrc.zsh` on .zshrc
+- by [sh.conf](https://github.com/darmats/sh.conf)
  
-
 ## Thanks
 
 This is based on
