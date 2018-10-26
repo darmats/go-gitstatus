@@ -66,7 +66,7 @@ func run() error {
 		} else if st[0] == '?' && st[1] == '?' {
 			untracked++
 		} else {
-			if st[1] == 'M' {
+			if st[1] == 'M' || st[1] == 'D' {
 				changed++
 			}
 			if st[0] == 'U' {
