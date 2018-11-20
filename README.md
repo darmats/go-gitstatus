@@ -1,4 +1,4 @@
-# go-zsh-git-prompt
+# go-git-prompt
 
 なんかうちのPCだとpythonがすごく重いことがあるからGolangで書いた。
 最適化はしてない。
