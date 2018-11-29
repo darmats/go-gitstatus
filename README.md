@@ -1,4 +1,4 @@
-# go-git-prompt
+# go-gitstatus
 
 なんかうちのPCだとpythonがすごく重いことがあるからGolangで書いた。
 最適化はしてない。
