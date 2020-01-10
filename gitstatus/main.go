@@ -1,22 +1,26 @@
 package main
 
 import (
-	"os/exec"
-	"strings"
 	"fmt"
+	"log"
+	"os"
+	"os/exec"
 	"regexp"
+	"strings"
 )
 
 func main() {
-	// if err := run(); err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	run() // not handling
+	if err := run(); err != nil {
+		log.Fatal(err)
+	}
+	// run() // not handling
 }
 
 func run() error {
-	bytes, err := exec.Command("git", "status", "--porcelain", "--branch").CombinedOutput()
+	if err := os.Setenv("GIT_PAGER_IN_USE", "true"); err != nil {
+		return err
+	}
+	bytes, err := exec.Command("git", "status", "--porcelain", "--branch").Output()
 	if err != nil {
 		return err
 	}
@@ -39,7 +43,10 @@ func run() error {
 				sp := strings.Split(st[2:], " ")
 				branch = sp[len(sp)-1]
 			case strings.Contains(st, "no branch"):
-				branch = getTagNameOrHash()
+				branch, err = getTagNameOrHash()
+				if err != nil {
+					return err
+				}
 			default:
 				sp := strings.Split(strings.TrimSpace(st[2:]), "...")
 				if len(sp) == 1 {
@@ -82,26 +89,21 @@ func run() error {
 }
 
 var (
-	tagOrHashExp = regexp.MustCompile(` \(.*\)`) // 1234567 (HEAD)
-	tagExp       = regexp.MustCompile(`tag: `)   // 1234567 (HEAD, tag: TAG)
+	tagExp = regexp.MustCompile(` \(tag: `)
 )
 
-func getTagNameOrHash() string {
-	bytes, err := exec.Command("git", "log", "-1", `--format=%h%d`).CombinedOutput()
+func getTagNameOrHash() (string, error) {
+	bytes, err := exec.Command("git", "log", "-1", "--format=%h%d", "--decorate-refs=tags").Output()
 	if err != nil {
-		return ""
+		return "", nil
 	}
-	status := string(bytes)
-	hashes := tagOrHashExp.Split(status, -1)
-	if len(hashes) <= 1 {
-		return hashes[0]
-	}
+	status := string(bytes) // "1234567" or "1234567 (tag: TAG)"
 
 	tags := tagExp.Split(status, -1)
 	if len(tags) <= 1 {
 		// hash
-		return ":" + strings.TrimSpace(hashes[0])
+		return ":" + strings.TrimSpace(tags[0]), nil
 	}
 	tag := strings.TrimSpace(tags[1])
-	return "tag/" + tag[0:len(tag)-1]
+	return "tag/" + tag[0:len(tag)-1], nil
 }
